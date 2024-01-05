@@ -1,0 +1,56 @@
+.block-music-player {
+  width: 10rem;
+  height: 5rem;
+  position: relative;
+}
+.is-mini {
+  width: 10rem;
+  height: 10rem;
+}
+.music-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: repeating-radial-gradient(rgb(16, 16, 18), rgb(20, 20, 22) 3%);
+  border-radius: 50%;
+  animation: cover-rotate infinite 20s linear;
+  &:before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background: conic-gradient(
+        transparent,
+        transparent 20%,
+        rgba(255, 255, 255, 0.1) 25%,
+        transparent 30%,
+        transparent 70%,
+        rgba(255, 255, 255, 0.1) 75%,
+        transparent 80%,
+        transparent
+    );
+  }
+}
+.music-cover-img {
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@keyframes cover-rotate {
+  0% {
+   transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
