@@ -9,6 +9,7 @@ import autoprefixer from "autoprefixer";
 import postcssImport from "postcss-import";
 import cssnano from "cssnano";
 import path from "path";
+import alias from '@rollup/plugin-alias';
 
 const __dirname = "/";
 export default defineConfig({
@@ -35,6 +36,11 @@ export default defineConfig({
     typescript(),
     json(),
     image(),
+    alias({
+      entries: [
+        { find: '@src', replacement: './src' }, // 例如，将 @src 替换为绝对路径
+      ],
+    }),
     postcss({
       // 内联css
       minimize: true,
