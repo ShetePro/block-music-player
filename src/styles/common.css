@@ -22,6 +22,9 @@
       height: 2rem;
     }
   }
+  audio {
+    display: none;
+  }
   &:hover {
     .music-control {
       transform: translateY(-100%);
