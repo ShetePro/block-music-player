@@ -1,6 +1,7 @@
 import playIcon from "../assets/play_icon.svg";
 import stopIcon from "@src/assets/stop_icon.svg";
 import MusicControl from "./control";
+import { transformSecond } from "@src/player/utils";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
   audioList?: AudioConfig[];
@@ -52,7 +53,18 @@ class BlockMusicPlayer {
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
     controlBox.append(playControl);
+    controlBox.append(this.setMusicTime());
     this.fragment.append(controlBox);
+  }
+  setMusicTime() {
+    const time = document.createElement("div");
+    time.classList.add("music-time");
+    setInterval(() => {
+      const current = this.audio.currentTime
+      time.innerText = transformSecond(this.audio.duration - current);
+
+    }, 1000);
+    return time;
   }
   renderAudio() {
     const audio = this.audio || document.createElement("audio");

@@ -9,6 +9,8 @@ export default class MusicControl {
   constructor(option: ControlOption) {
     this.state = option;
   }
+
+
   toggle () {
     this.state.play ? this.stop() : this.play()
     console.log(this.state.audio)

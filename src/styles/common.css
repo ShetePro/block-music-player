@@ -17,9 +17,15 @@
     opacity: 0;
     transition: all ease-in .3s;
     .music-control-play {
+      position: absolute;
       margin: 0 auto;
       width: 2rem;
       height: 2rem;
+    }
+    .music-time {
+      position: absolute;
+      color: white;
+      bottom: 10%;
     }
   }
   audio {
