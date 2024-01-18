@@ -47,7 +47,7 @@
 }
 .music-rotate {
   .music-cover {
-    animation: cover-rotate infinite 20s linear;
+    animation-play-state: running;
   }
 }
 .music-cover {
@@ -60,6 +60,8 @@
   overflow: hidden;
   background: repeating-radial-gradient(rgb(16, 16, 18), rgb(20, 20, 22) 3%);
   border-radius: 50%;
+  animation: cover-rotate infinite 20s linear;
+  animation-play-state: paused;
   &:before{
     content: '';
     position: absolute;
