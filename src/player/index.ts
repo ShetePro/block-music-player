@@ -24,6 +24,7 @@ class BlockMusicPlayer {
     this.container = option.container;
     this.audioList = option.audioList;
     this.control = new MusicControl({
+      container: this.container,
       play: false,
       index: 0,
       words: false,

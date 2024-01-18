@@ -3,6 +3,7 @@ export type ControlOption = {
   index: number
   words: boolean
   audio: null | HTMLAudioElement
+  container: HTMLElement | null;
 }
 export default class MusicControl {
   state: ControlOption;
@@ -13,15 +14,16 @@ export default class MusicControl {
 
   toggle () {
     this.state.play ? this.stop() : this.play()
-    console.log(this.state.audio)
   }
   play() {
     this.state.play = true
     this.state.audio?.play()
+    this.state.container?.classList.add('music-rotate')
   }
   stop() {
     this.state.play = false
     this.state.audio?.pause()
+    this.state.container?.classList.remove('music-rotate')
   }
 
   next() {}
