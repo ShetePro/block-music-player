@@ -1,7 +1,7 @@
-import playIcon from "../assets/play_icon.svg";
+import playIcon from "../../assets/play_icon.svg";
 import stopIcon from "@src/assets/stop_icon.svg";
 import MusicControl from "./control";
-import { transformSecond } from "@src/player/utils";
+import { transformSecond } from "@src/js/player/utils";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
   audioList?: AudioConfig[];
