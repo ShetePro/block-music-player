@@ -1,0 +1,28 @@
+{
+  "retainLines": true,
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "exclude": ["transform-typeof-symbol"],
+        "modules": false
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "env": {
+    "test": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs"],
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

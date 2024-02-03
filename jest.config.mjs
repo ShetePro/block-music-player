@@ -5,7 +5,6 @@
 
 /** @type {import('jest').Config} */
 const config = {
-  presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
