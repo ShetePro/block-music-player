@@ -27,6 +27,14 @@
       color: white;
       bottom: 10%;
     }
+    .music-control-icon {
+      width: 16px;
+      height: 16px;
+    }
+    .voice-icon {
+      position: absolute;
+      right: 10px;
+    }
   }
   audio {
     display: none;
