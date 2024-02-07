@@ -13,7 +13,7 @@ import alias from '@rollup/plugin-alias';
 
 const __dirname = "/";
 export default defineConfig({
-  input: "src/index.js",
+  input: "src/js/index.js",
   output: [
     {
       file: "dist/bundle.js",
