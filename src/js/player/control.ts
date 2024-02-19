@@ -1,3 +1,5 @@
+import {CreateVolume} from "@src/js/player/volume";
+
 export type ControlOption = {
   play: boolean
   index: number
@@ -7,11 +9,20 @@ export type ControlOption = {
 }
 export default class MusicControl {
   state: ControlOption;
+  voiceIcon: HTMLElement
   constructor(option: ControlOption) {
     this.state = option;
+    this.voiceIcon = new CreateVolume({
+      change: this.volumeChange
+    }).dom
   }
 
-
+  volumeChange (value: number) {
+    const audio = this.state.audio
+    if (audio) {
+      audio.volume = value
+    }
+  }
   toggle () {
     this.state.play ? this.stop() : this.play()
   }

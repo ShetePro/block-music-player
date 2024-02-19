@@ -2,7 +2,6 @@ import playIcon from "../../assets/play_icon.svg";
 import stopIcon from "@src/assets/stop_icon.svg";
 import MusicControl from "./control";
 import { transformSecond } from "@src/js/player/utils";
-import {createVoiceIcon} from "@src/js/player/dom";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
   audioList?: AudioConfig[];
@@ -55,7 +54,7 @@ class BlockMusicPlayer {
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
     controlBox.append(playControl);
-    controlBox.append(createVoiceIcon())
+    controlBox.append(this.control.voiceIcon)
     controlBox.append(this.setMusicTime());
     this.fragment.append(controlBox);
   }
