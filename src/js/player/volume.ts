@@ -2,6 +2,7 @@ import voiceOffIcon from "@src/assets/voice_off.svg";
 import voiceLowIcon from "@src/assets/voice_low.svg";
 import voiceNormalIcon from "@src/assets/voice_normal.svg";
 import voiceMaxIcon from "@src/assets/voice_max.svg";
+import { createDocumentEl } from "@src/js/player/create";
 
 type VolumeOption = {
   change: (value: number) => void;
@@ -13,8 +14,8 @@ export class CreateVolume {
   option: VolumeOption;
   constructor(opt: VolumeOption) {
     this.option = opt;
+    this.bar = createDocumentEl("div");
     this.dom = this.createVoiceIcon();
-    this.bar = document.createElement("div");
   }
   createVoiceIcon(): HTMLElement {
     const iconMap = {
@@ -23,9 +24,8 @@ export class CreateVolume {
       normal: voiceNormalIcon,
       max: voiceMaxIcon,
     };
-    const voiceBox = document.createElement("div");
-    voiceBox.classList.add("voice-icon");
-    const voiceIcon = document.createElement("img");
+    const voiceBox = createDocumentEl("div", { classList: ["voice-icon"] });
+    const voiceIcon = createDocumentEl("img", { classList: ["voice-icon"] });
     voiceIcon.src = iconMap.off;
     voiceIcon.classList.add("music-control-icon");
     this.icon = voiceIcon;

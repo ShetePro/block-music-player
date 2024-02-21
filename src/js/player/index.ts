@@ -2,6 +2,7 @@ import playIcon from "../../assets/play_icon.svg";
 import stopIcon from "@src/assets/stop_icon.svg";
 import MusicControl from "./control";
 import { transformSecond } from "@src/js/player/utils";
+import { createDocumentEl } from "@src/js/player/create";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
   audioList?: AudioConfig[];
@@ -18,7 +19,7 @@ class BlockMusicPlayer {
   fragment = document.createDocumentFragment();
   playerIndex = 0;
   audioList: AudioConfig[] | undefined;
-  audio = document.createElement("audio");
+  audio = createDocumentEl("audio");
   control: MusicControl;
   constructor(option: BlockMusicPlayerOption) {
     this.container = option.container;
@@ -37,34 +38,37 @@ class BlockMusicPlayer {
     this.renderCover();
     this.renderAudio();
     this.renderControl();
-    const playerBody = document.createElement("div");
-    playerBody.classList.add("block-music-player", "is-mini");
+    const playerBody = createDocumentEl("div", {
+      classList: ["block-music-player", "is-mini"],
+    });
     playerBody.append(this.fragment);
     this.container.append(playerBody);
   }
 
   renderControl() {
-    const controlBox = document.createElement("div");
-    controlBox.classList.add("music-control");
-    const playControl = document.createElement("img");
+    const controlBox = createDocumentEl("div", {
+      classList: ["music-control"],
+    });
+    const playControl = createDocumentEl("img", {
+      classList: ["music-control-play"],
+    });
     playControl.src = this.control.state.play ? stopIcon : playIcon;
-    playControl.classList.add("music-control-play");
     playControl.addEventListener("click", () => {
       this.control?.toggle();
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
     controlBox.append(playControl);
-    controlBox.append(this.control.voiceIcon)
+    controlBox.append(this.control.voiceIcon);
     controlBox.append(this.setMusicTime());
     this.fragment.append(controlBox);
   }
   setMusicTime() {
-    const time = document.createElement("div");
-    time.classList.add("music-time");
+    const time = createDocumentEl("div", {
+      classList: ["music-time"],
+    });
     setInterval(() => {
-      const current = this.audio.currentTime
+      const current = this.audio.currentTime;
       time.innerText = transformSecond(this.audio.duration - current);
-
     }, 1000);
     return time;
   }
@@ -76,12 +80,12 @@ class BlockMusicPlayer {
   }
 
   renderCover() {
-    const cover = document.createElement("div");
-    cover.classList.add("music-cover");
-    const coverImg = document.createElement("img");
-    cover.append(coverImg);
+    const cover = createDocumentEl("div", { classList: ["music-cover"] });
+    const coverImg = createDocumentEl("img", {
+      classList: ["music-cover-img"],
+    });
     coverImg.src = "https://w.wallhaven.cc/full/jx/wallhaven-jxl31y.png";
-    coverImg.classList.add("music-cover-img");
+    cover.append(coverImg);
     this.fragment.append(cover);
   }
 }
