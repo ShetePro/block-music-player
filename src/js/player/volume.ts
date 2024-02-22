@@ -25,9 +25,8 @@ export class CreateVolume {
       max: voiceMaxIcon,
     };
     const voiceBox = createDocumentEl("div", { classList: ["voice-icon"] });
-    const voiceIcon = createDocumentEl("img", { classList: ["voice-icon"] });
+    const voiceIcon = createDocumentEl("img", { classList: ["music-control-icon"] });
     voiceIcon.src = iconMap.off;
-    voiceIcon.classList.add("music-control-icon");
     this.icon = voiceIcon;
     this.createVoiceBar();
     voiceBox.append(voiceIcon, this.bar);
@@ -36,5 +35,15 @@ export class CreateVolume {
 
   createVoiceBar() {
     this.bar.classList.add("voice-bar");
+    const line = createDocumentEl('span', {classList: ['voice-bar-line']})
+    this.bar.addEventListener('click', (e) => {
+      const dom = e.target as HTMLSpanElement
+      const {offsetY} = e
+      if (offsetY !== undefined) {
+        const volume = dom.clientHeight - offsetY
+        line.style.transform = `translateY(${offsetY}px)`
+      }
+    })
+    this.bar.append(line)
   }
 }

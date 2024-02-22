@@ -1,3 +1,4 @@
+
 type CreateDomOption = {
   classList?: string[];
   append?: HTMLElement[] | Node[] | string[];
@@ -16,3 +17,4 @@ export function createDocumentEl<K extends keyof HTMLElementTagNameMap>(
   dom.append(...append);
   return dom;
 }
+
