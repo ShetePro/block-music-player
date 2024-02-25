@@ -14,6 +14,7 @@ export default class MusicControl {
     this.state = option;
     this.voiceIcon = new CreateVolume({
       change: this.volumeChange,
+      audio: this.state.audio
     }).dom;
   }
 

@@ -6,16 +6,27 @@ import { createDocumentEl } from "@src/js/player/create";
 
 type VolumeOption = {
   change: (value: number) => void;
+  audio: HTMLAudioElement | null;
+  volumeValue?: number;
 };
 export class CreateVolume {
   dom: HTMLElement;
   icon: HTMLImageElement | undefined;
   bar: HTMLElement;
+  volumeLine: HTMLSpanElement;
   option: VolumeOption;
+  volumeValue: number;
+  startY: number;
+  endY: number;
   constructor(opt: VolumeOption) {
     this.option = opt;
     this.bar = createDocumentEl("div");
+    this.volumeLine = createDocumentEl("span", { classList: ["voice-bar-line"] });
+    this.startY = 0;
+    this.endY = 0;
+    this.volumeValue = opt.volumeValue || 20;
     this.dom = this.createVoiceIcon();
+    this.changeVolumeLine()
   }
   createVoiceIcon(): HTMLElement {
     const iconMap = {
@@ -25,7 +36,9 @@ export class CreateVolume {
       max: voiceMaxIcon,
     };
     const voiceBox = createDocumentEl("div", { classList: ["voice-icon"] });
-    const voiceIcon = createDocumentEl("img", { classList: ["music-control-icon"] });
+    const voiceIcon = createDocumentEl("img", {
+      classList: ["music-control-icon"],
+    });
     voiceIcon.src = iconMap.off;
     this.icon = voiceIcon;
     this.createVoiceBar();
@@ -35,15 +48,29 @@ export class CreateVolume {
 
   createVoiceBar() {
     this.bar.classList.add("voice-bar");
-    const line = createDocumentEl('span', {classList: ['voice-bar-line']})
-    this.bar.addEventListener('click', (e) => {
-      const dom = e.target as HTMLSpanElement
-      const {offsetY} = e
+    this.bar.addEventListener("mousedown", (e) => {
+      console.log(e)
+      const dom = e.target as HTMLSpanElement;
+      const { offsetY } = e;
       if (offsetY !== undefined) {
-        const volume = dom.clientHeight - offsetY
-        line.style.transform = `translateY(${offsetY}px)`
+        this.volumeValue = (dom.clientHeight - offsetY) / dom.clientHeight;
+        this.changeVolumeLine()
       }
-    })
-    this.bar.append(line)
+      this.openDrop();
+      this.startY = offsetY
+    });
+    console.log(this)
+    this.bar.append(this.volumeLine);
+  }
+  openDrop() {
+    this.bar.addEventListener("mousemove", (e) => {
+      console.log(e.offsetY);
+      this.endY = e.offsetY
+      this.changeVolumeLine()
+    });
+  }
+  changeVolumeLine () {
+    console.log(this.volumeValue)
+    this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
   }
 }
