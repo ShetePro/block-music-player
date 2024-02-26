@@ -18,15 +18,20 @@ export class CreateVolume {
   volumeValue: number;
   startY: number;
   endY: number;
+  isOver: boolean;
   constructor(opt: VolumeOption) {
     this.option = opt;
     this.bar = createDocumentEl("div");
-    this.volumeLine = createDocumentEl("span", { classList: ["voice-bar-line"] });
+    this.volumeLine = createDocumentEl("span", {
+      classList: ["voice-bar-line"],
+    });
+    this.isOver = true;
     this.startY = 0;
     this.endY = 0;
     this.volumeValue = opt.volumeValue || 20;
     this.dom = this.createVoiceIcon();
-    this.changeVolumeLine()
+    this.changeVolumeLine();
+    this.initIconEvent();
   }
   createVoiceIcon(): HTMLElement {
     const iconMap = {
@@ -36,41 +41,56 @@ export class CreateVolume {
       max: voiceMaxIcon,
     };
     const voiceBox = createDocumentEl("div", { classList: ["voice-icon"] });
-    const voiceIcon = createDocumentEl("img", {
+    this.icon = createDocumentEl("img", {
       classList: ["music-control-icon"],
     });
-    voiceIcon.src = iconMap.off;
-    this.icon = voiceIcon;
+    this.icon.src = iconMap.off;
     this.createVoiceBar();
-    voiceBox.append(voiceIcon, this.bar);
+    voiceBox.append(this.icon, this.bar);
     return voiceBox;
   }
-
+  initIconEvent() {
+    this.icon?.addEventListener("mouseover", () => {
+      this.isOver = false;
+      this.bar.classList.add("bar-show");
+    });
+    this.dom?.addEventListener("mouseleave", () => {
+      console.log("remove");
+      this.isOver = true;
+      if (!this.startY) {
+        this.bar.classList.remove("bar-show");
+      }
+    });
+  }
   createVoiceBar() {
     this.bar.classList.add("voice-bar");
+    const moveChange = (e: MouseEvent) => {
+      const dom = e.target as HTMLSpanElement;
+      this.endY = e.offsetY;
+      this.volumeValue = (1 - this.endY / dom.clientHeight) * 100;
+      this.changeVolumeLine();
+    };
     this.bar.addEventListener("mousedown", (e) => {
-      console.log(e)
       const dom = e.target as HTMLSpanElement;
       const { offsetY } = e;
       if (offsetY !== undefined) {
-        this.volumeValue = (dom.clientHeight - offsetY) / dom.clientHeight;
-        this.changeVolumeLine()
+        this.volumeValue = (1 - offsetY / dom.clientHeight) * 100;
+        this.changeVolumeLine();
       }
-      this.openDrop();
-      this.startY = offsetY
+      this.bar.addEventListener("mousemove", moveChange);
+      this.startY = offsetY;
     });
-    console.log(this)
+    this.bar.addEventListener("mouseup", () => {
+      this.startY = 0;
+      this.endY = 0;
+      this.bar.removeEventListener("mousemove", moveChange);
+      if (this.isOver) {
+        this.bar.classList.remove('bar-show')
+      }
+    });
     this.bar.append(this.volumeLine);
   }
-  openDrop() {
-    this.bar.addEventListener("mousemove", (e) => {
-      console.log(e.offsetY);
-      this.endY = e.offsetY
-      this.changeVolumeLine()
-    });
-  }
-  changeVolumeLine () {
-    console.log(this.volumeValue)
+  changeVolumeLine() {
     this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
   }
 }
