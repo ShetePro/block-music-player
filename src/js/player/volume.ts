@@ -16,9 +16,8 @@ export class CreateVolume {
   volumeLine: HTMLSpanElement;
   option: VolumeOption;
   volumeValue: number;
-  startY: number;
-  endY: number;
   isOver: boolean;
+  isMove: boolean;
   constructor(opt: VolumeOption) {
     this.option = opt;
     this.bar = createDocumentEl("div");
@@ -26,8 +25,7 @@ export class CreateVolume {
       classList: ["voice-bar-line"],
     });
     this.isOver = true;
-    this.startY = 0;
-    this.endY = 0;
+    this.isMove = false;
     this.volumeValue = opt.volumeValue || 20;
     this.dom = this.createVoiceIcon();
     this.changeVolumeLine();
@@ -55,9 +53,8 @@ export class CreateVolume {
       this.bar.classList.add("bar-show");
     });
     this.dom?.addEventListener("mouseleave", () => {
-      console.log("remove");
       this.isOver = true;
-      if (!this.startY) {
+      if (!this.isMove) {
         this.bar.classList.remove("bar-show");
       }
     });
@@ -65,10 +62,10 @@ export class CreateVolume {
   createVoiceBar() {
     this.bar.classList.add("voice-bar");
     const moveChange = (e: MouseEvent) => {
-      const dom = e.target as HTMLSpanElement;
-      this.endY = e.offsetY;
-      this.volumeValue = (1 - this.endY / dom.clientHeight) * 100;
-      this.changeVolumeLine();
+      const barBottom = this.bar.getBoundingClientRect().bottom;
+      const offset = barBottom - e.y;
+      const value = Math.min(offset / this.bar.clientHeight, 1) * 100;
+      this.changeVolumeLine(value);
     };
     this.bar.addEventListener("mousedown", (e) => {
       const dom = e.target as HTMLSpanElement;
@@ -77,20 +74,23 @@ export class CreateVolume {
         this.volumeValue = (1 - offsetY / dom.clientHeight) * 100;
         this.changeVolumeLine();
       }
-      this.bar.addEventListener("mousemove", moveChange);
-      this.startY = offsetY;
+      document.body.addEventListener("mousemove", moveChange);
+      this.isMove = true;
     });
-    this.bar.addEventListener("mouseup", () => {
-      this.startY = 0;
-      this.endY = 0;
-      this.bar.removeEventListener("mousemove", moveChange);
+    document.body.addEventListener("mouseup", () => {
+      if (!this.isMove) return
+      document.body.removeEventListener("mousemove", moveChange);
+      this.isMove = false;
       if (this.isOver) {
-        this.bar.classList.remove('bar-show')
+        this.bar.classList.remove("bar-show");
       }
     });
     this.bar.append(this.volumeLine);
   }
-  changeVolumeLine() {
+  changeVolumeLine(value?: number) {
+    if (value !== undefined) {
+      this.volumeValue = Math.max(Math.min(100, value), 0);
+    }
     this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
   }
 }
