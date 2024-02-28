@@ -78,7 +78,7 @@ export class CreateVolume {
       this.isMove = true;
     });
     document.body.addEventListener("mouseup", () => {
-      if (!this.isMove) return
+      if (!this.isMove) return;
       document.body.removeEventListener("mousemove", moveChange);
       this.isMove = false;
       if (this.isOver) {
@@ -90,6 +90,23 @@ export class CreateVolume {
   changeVolumeLine(value?: number) {
     if (value !== undefined) {
       this.volumeValue = Math.max(Math.min(100, value), 0);
+    }
+    if (this.icon) {
+      let iconSrc = ''
+      switch (true) {
+        case this.volumeValue === 0:
+          iconSrc = voiceOffIcon;
+          break;
+        case this.volumeValue < 25:
+          iconSrc = voiceLowIcon;
+          break;
+        case this.volumeValue > 80:
+          iconSrc = voiceMaxIcon;
+          break;
+        default:
+          iconSrc = voiceNormalIcon;
+      }
+      this.icon.src = iconSrc
     }
     this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
   }
