@@ -11,21 +11,26 @@ type VolumeOption = {
 };
 export class CreateVolume {
   dom: HTMLElement;
-  icon: HTMLImageElement | undefined;
+  icon: HTMLImageElement;
   bar: HTMLElement;
   volumeLine: HTMLSpanElement;
   option: VolumeOption;
   volumeValue: number;
   isOver: boolean;
   isMove: boolean;
+  isMute: boolean;
   constructor(opt: VolumeOption) {
     this.option = opt;
     this.bar = createDocumentEl("div");
     this.volumeLine = createDocumentEl("span", {
       classList: ["voice-bar-line"],
     });
+    this.icon = createDocumentEl("img", {
+      classList: ["music-control-icon"],
+    });
     this.isOver = true;
     this.isMove = false;
+    this.isMute = false;
     this.volumeValue = opt.volumeValue || 20;
     this.dom = this.createVoiceIcon();
     this.changeVolumeLine();
@@ -39,15 +44,16 @@ export class CreateVolume {
       max: voiceMaxIcon,
     };
     const voiceBox = createDocumentEl("div", { classList: ["voice-icon"] });
-    this.icon = createDocumentEl("img", {
-      classList: ["music-control-icon"],
-    });
     this.icon.src = iconMap.off;
     this.createVoiceBar();
     voiceBox.append(this.icon, this.bar);
     return voiceBox;
   }
   initIconEvent() {
+    this.icon?.addEventListener("click", () => {
+      this.isMute = !this.isMute;
+      this.changeVolumeLine();
+    });
     this.icon?.addEventListener("mouseover", () => {
       this.isOver = false;
       this.bar.classList.add("bar-show");
@@ -69,6 +75,7 @@ export class CreateVolume {
     };
     this.bar.addEventListener("mousedown", (e) => {
       const dom = e.target as HTMLSpanElement;
+      this.isMute = false;
       const { offsetY } = e;
       if (offsetY !== undefined) {
         this.volumeValue = (1 - offsetY / dom.clientHeight) * 100;
@@ -87,30 +94,34 @@ export class CreateVolume {
     });
     this.bar.append(this.volumeLine);
   }
+  getIcon() {
+    if (this.isMute) return voiceOffIcon;
+    let iconSrc = voiceNormalIcon;
+    switch (true) {
+      case this.volumeValue === 0:
+        iconSrc = voiceOffIcon;
+        break;
+      case this.volumeValue < 25:
+        iconSrc = voiceLowIcon;
+        break;
+      case this.volumeValue > 80:
+        iconSrc = voiceMaxIcon;
+        break;
+      default:
+        iconSrc = voiceNormalIcon;
+    }
+    return iconSrc;
+  }
   changeVolumeLine(value?: number) {
     if (value !== undefined) {
       this.volumeValue = Math.max(Math.min(100, value), 0);
     }
-    if (this.icon) {
-      let iconSrc = voiceNormalIcon;
-      switch (true) {
-        case this.volumeValue === 0:
-          iconSrc = voiceOffIcon;
-          break;
-        case this.volumeValue < 25:
-          iconSrc = voiceLowIcon;
-          break;
-        case this.volumeValue > 80:
-          iconSrc = voiceMaxIcon;
-          break;
-        default:
-          iconSrc = voiceNormalIcon;
-      }
-      this.icon.src = iconSrc;
-    }
-    this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
+    this.icon.src = this.getIcon();
+    this.volumeLine.style.transform = `translateY(-${
+      this.isMute ? 0 : this.volumeValue
+    }%)`;
     if (this.option.audio) {
-      this.option.audio.volume = this.volumeValue / 100;
+      this.option.audio.volume = this.isMute ? 0 : this.volumeValue / 100;
     }
   }
 }
