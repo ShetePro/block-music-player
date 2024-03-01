@@ -92,7 +92,7 @@ export class CreateVolume {
       this.volumeValue = Math.max(Math.min(100, value), 0);
     }
     if (this.icon) {
-      let iconSrc = ''
+      let iconSrc = voiceNormalIcon;
       switch (true) {
         case this.volumeValue === 0:
           iconSrc = voiceOffIcon;
@@ -106,8 +106,11 @@ export class CreateVolume {
         default:
           iconSrc = voiceNormalIcon;
       }
-      this.icon.src = iconSrc
+      this.icon.src = iconSrc;
     }
     this.volumeLine.style.transform = `translateY(-${this.volumeValue}%)`;
+    if (this.option.audio) {
+      this.option.audio.volume = this.volumeValue / 100;
+    }
   }
 }
