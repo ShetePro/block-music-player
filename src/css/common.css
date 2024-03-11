@@ -19,6 +19,11 @@
     opacity: 0;
     border-radius: 50%;
     transition: all ease-in 0.3s;
+    .music-title {
+      position: absolute;
+      top: 5%;
+      color: white;
+    }
     .music-control-play {
       position: absolute;
       margin: 0 auto;

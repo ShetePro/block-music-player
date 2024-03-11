@@ -5,7 +5,7 @@ import { transformSecond } from "@src/js/player/utils";
 import { createDocumentEl } from "@src/js/player/create";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
-  audioList?: AudioConfig[];
+  playerList?: AudioConfig[];
 }
 
 type AudioConfig = {
@@ -18,12 +18,12 @@ class BlockMusicPlayer {
   container: HTMLElement | null;
   fragment = document.createDocumentFragment();
   playerIndex = 0;
-  audioList: AudioConfig[] | undefined;
+  playerList: AudioConfig[];
   audio = createDocumentEl("audio");
   control: MusicControl;
   constructor(option: BlockMusicPlayerOption) {
     this.container = option.container;
-    this.audioList = option.audioList;
+    this.playerList = option.playerList || [];
     this.control = new MusicControl({
       container: this.container,
       play: false,
@@ -57,10 +57,15 @@ class BlockMusicPlayer {
       this.control?.toggle();
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
-    controlBox.append(playControl);
-    controlBox.append(this.control.voiceIcon);
-    controlBox.append(this.setMusicTime());
+    controlBox.append(playControl, this.control.voiceIcon, this.setMusicTitle(), this.setMusicTime());
     this.fragment.append(controlBox);
+  }
+  setMusicTitle () {
+    const title = createDocumentEl('span', {
+      classList: ['music-title']
+    })
+    title.innerText = this.playerList[this.playerIndex].title
+    return title
   }
   setMusicTime() {
     const time = createDocumentEl("div", {
