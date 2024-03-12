@@ -8,7 +8,7 @@ interface BlockMusicPlayerOption {
   playerList?: AudioConfig[];
 }
 
-type AudioConfig = {
+export type AudioConfig = {
   cover: string;
   title: string;
   artist: string;
@@ -19,21 +19,32 @@ class BlockMusicPlayer {
   fragment = document.createDocumentFragment();
   playerIndex = 0;
   playerList: AudioConfig[];
-  currentAudio: AudioConfig;
   audio = createDocumentEl("audio");
   control: MusicControl;
+  changeEvent: ((current: AudioConfig) => void)[];
   constructor(option: BlockMusicPlayerOption) {
+    const that = this
     this.container = option.container;
     this.playerList = option.playerList || [];
     this.control = new MusicControl({
       container: this.container,
+      playerList: this.playerList,
       play: false,
-      index: 0,
+      index: this.playerIndex,
       words: false,
       audio: this.audio,
+      renderEvent: () => {
+        this.changeEvent.forEach((event) => {
+          event(this.control.current);
+        });
+      },
     });
-    this.currentAudio = this.playerList[this.playerIndex]
+    this.changeEvent = [];
     this.initPlayer();
+  }
+  renderEvent() {
+    console.log(this)
+
   }
   initPlayer() {
     if (!this.container) return;
@@ -71,22 +82,34 @@ class BlockMusicPlayer {
     const title = createDocumentEl("span", {
       classList: ["music-title"],
     });
-    title.innerText = this.currentAudio.title;
+    title.innerText = this.control.current.title;
+    this.changeEvent.push((current) => {
+      title.innerText = current.title;
+    });
     return title;
   }
   setMusicTime() {
     const time = createDocumentEl("div", {
       classList: ["music-time"],
     });
+    this.audio.currentTime = 230
     setInterval(() => {
       const current = this.audio.currentTime;
       time.innerText = transformSecond(this.audio.duration - current);
+      if (current === this.audio.duration) {
+        console.log("播放完了 下一首");
+        this.control.nextAudio();
+        this.audio.play()
+      }
     }, 1000);
     return time;
   }
   renderAudio() {
     const audio = this.audio || document.createElement("audio");
-    audio.src = this.currentAudio.url;
+    audio.src = this.control.current.url;
+    this.changeEvent.push((current) => {
+      audio.src = current.url;
+    });
     this.fragment.append(audio);
     this.audio = audio;
   }
@@ -96,7 +119,10 @@ class BlockMusicPlayer {
     const coverImg = createDocumentEl("img", {
       classList: ["music-cover-img"],
     });
-    coverImg.src = this.currentAudio.cover;
+    coverImg.src = this.control.current.cover;
+    this.changeEvent.push((current) => {
+      coverImg.src = current.cover;
+    });
     cover.append(coverImg);
     this.fragment.append(cover);
   }
