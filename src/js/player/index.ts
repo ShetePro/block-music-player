@@ -19,6 +19,7 @@ class BlockMusicPlayer {
   fragment = document.createDocumentFragment();
   playerIndex = 0;
   playerList: AudioConfig[];
+  currentAudio: AudioConfig;
   audio = createDocumentEl("audio");
   control: MusicControl;
   constructor(option: BlockMusicPlayerOption) {
@@ -31,6 +32,7 @@ class BlockMusicPlayer {
       words: false,
       audio: this.audio,
     });
+    this.currentAudio = this.playerList[this.playerIndex]
     this.initPlayer();
   }
   initPlayer() {
@@ -57,15 +59,20 @@ class BlockMusicPlayer {
       this.control?.toggle();
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
-    controlBox.append(playControl, this.control.voiceIcon, this.setMusicTitle(), this.setMusicTime());
+    controlBox.append(
+      playControl,
+      this.control.voiceIcon,
+      this.setMusicTitle(),
+      this.setMusicTime(),
+    );
     this.fragment.append(controlBox);
   }
-  setMusicTitle () {
-    const title = createDocumentEl('span', {
-      classList: ['music-title']
-    })
-    title.innerText = this.playerList[this.playerIndex].title
-    return title
+  setMusicTitle() {
+    const title = createDocumentEl("span", {
+      classList: ["music-title"],
+    });
+    title.innerText = this.currentAudio.title;
+    return title;
   }
   setMusicTime() {
     const time = createDocumentEl("div", {
@@ -79,7 +86,7 @@ class BlockMusicPlayer {
   }
   renderAudio() {
     const audio = this.audio || document.createElement("audio");
-    audio.src = "../src/assets/xq.mp3";
+    audio.src = this.currentAudio.url;
     this.fragment.append(audio);
     this.audio = audio;
   }
@@ -89,7 +96,7 @@ class BlockMusicPlayer {
     const coverImg = createDocumentEl("img", {
       classList: ["music-cover-img"],
     });
-    coverImg.src = "https://w.wallhaven.cc/full/jx/wallhaven-jxl31y.png";
+    coverImg.src = this.currentAudio.cover;
     cover.append(coverImg);
     this.fragment.append(cover);
   }
