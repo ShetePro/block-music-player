@@ -3,6 +3,7 @@ import stopIcon from "@src/assets/stop_icon.svg";
 import MusicControl from "./control";
 import { transformSecond } from "@src/js/player/utils";
 import { createDocumentEl } from "@src/js/player/create";
+import {ProcessBar} from "@src/js/player/processBar";
 interface BlockMusicPlayerOption {
   container: HTMLElement | null;
   playerList?: AudioConfig[];
@@ -70,11 +71,12 @@ class BlockMusicPlayer {
       this.control?.toggle();
       playControl.src = this.control.state.play ? stopIcon : playIcon;
     });
+    const processBar = new ProcessBar({control: this.control, audio: this.audio})
     controlBox.append(
       playControl,
       this.control.voiceIcon,
       this.setMusicTitle(),
-      this.setMusicTime(),
+      processBar.createContainer(),
     );
     this.fragment.append(controlBox);
   }
@@ -87,22 +89,6 @@ class BlockMusicPlayer {
       title.innerText = current.title;
     });
     return title;
-  }
-  setMusicTime() {
-    const time = createDocumentEl("div", {
-      classList: ["music-time"],
-    });
-    this.audio.currentTime = 230
-    setInterval(() => {
-      const current = this.audio.currentTime;
-      time.innerText = transformSecond(this.audio.duration - current);
-      if (current === this.audio.duration) {
-        console.log("播放完了 下一首");
-        this.control.nextAudio();
-        this.audio.play()
-      }
-    }, 1000);
-    return time;
   }
   renderAudio() {
     const audio = this.audio || document.createElement("audio");

@@ -1,3 +1,4 @@
+@import "processBar.css";
 .block-music-player {
   width: 10rem;
   height: 5rem;
@@ -30,11 +31,7 @@
       width: 2rem;
       height: 2rem;
     }
-    .music-time {
-      position: absolute;
-      color: white;
-      bottom: 10%;
-    }
+
     .music-control-icon {
       width: 16px;
       height: 16px;
