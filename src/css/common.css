@@ -30,6 +30,7 @@
       margin: 0 auto;
       width: 2rem;
       height: 2rem;
+      cursor: pointer;
     }
 
     .music-control-icon {
@@ -41,6 +42,7 @@
       bottom: 34px;
       right: 13px;
       z-index: 1;
+      cursor: pointer;
       img {
         margin-top: 1rem;
       }
@@ -77,9 +79,6 @@
     .music-control {
       opacity: 1;
     }
-    .music-cover {
-    }
-    cursor: pointer;
   }
 }
 .is-mini {

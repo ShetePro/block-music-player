@@ -27,8 +27,11 @@
       height: 0.5rem;
       border-radius: 50%;
       background: #fff;
-
-
+      cursor: pointer;
+      transition: transform .5s ease;
+      &:hover {
+        transform: scale(1.2);
+      }
     }
   }
 }
