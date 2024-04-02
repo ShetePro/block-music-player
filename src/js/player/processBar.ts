@@ -35,9 +35,10 @@ export class ProcessBar {
   setBar() {
     const line = createDocumentEl("div", { classList: ["bar-line"] });
     const fullLine = createDocumentEl("div", { classList: ["full-line"] });
+    const finishLine = createDocumentEl("div", { classList: ["finish-line"] });
     const wrap = createDocumentEl("div", {
       classList: ["wrap"],
-      append: [fullLine],
+      append: [fullLine, finishLine],
     });
     const pointer = createDocumentEl("span", { classList: ["bar-pointer"] });
     line.append(wrap, pointer);
@@ -52,7 +53,6 @@ export class ProcessBar {
       }
     };
     wrap.addEventListener("mouseenter", () => {
-      console.log('event')
       wrap.addEventListener("mousemove", lineMoveEvent);
       this.popover.classList.add("popover-show");
     });
@@ -74,7 +74,9 @@ export class ProcessBar {
     const progressTime = this.audio.duration - current
     this.progress = 1 - (progressTime / this.audio.duration);
     const x = this.wrap ? this.progress * this.wrap.offsetWidth : 0;
-    this.pointer?.setAttribute("style", `transform:translateX(${x}px);`);
+    this.pointer?.setAttribute("style", `transform:translateX(calc(${x}px - 50%));`);
+    const finishLine = this.wrap?.getElementsByClassName('finish-line')[0]
+    finishLine?.setAttribute("style", `transform:translateX(calc(${x}px));`);
   }
 
   setMusicTime() {
@@ -89,8 +91,9 @@ export class ProcessBar {
       this.progressMove();
       time.innerText = transformSecond(progressTime);
       if (current === this.audio.duration) {
-        console.log("播放完了 下一首");
-        this.pointer?.setAttribute("style", `transform:translateX(0px);`);
+        const finishLine = this.wrap?.getElementsByClassName('finish-line')[0]
+        finishLine?.setAttribute("style", `transform:translateX(0);`);
+        this.pointer?.setAttribute("style", `transform:translateX(-50%);`);
         this.control.nextAudio();
         this.audio.play();
       }
