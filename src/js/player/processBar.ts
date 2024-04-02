@@ -12,6 +12,7 @@ export class ProcessBar {
   control: MusicControl;
   pointer: HTMLSpanElement | undefined;
   wrap: HTMLDivElement | undefined;
+  popover: HTMLDivElement;
   timer: number;
   progress: number;
 
@@ -21,11 +22,12 @@ export class ProcessBar {
     this.control = opt.control;
     this.timer = 0;
     this.progress = 0;
+    this.popover = createDocumentEl("div", { classList: ["bar-popover"] });
   }
   createContainer() {
     const box = createDocumentEl("div", {
       classList: ["process-bar"],
-      append: [this.setBar(), this.setMusicTime()],
+      append: [this.setBar(), this.setMusicTime(), this.popover],
     });
     this.dom.append(box);
     return this.dom;
@@ -38,26 +40,26 @@ export class ProcessBar {
       append: [fullLine],
     });
     const pointer = createDocumentEl("span", { classList: ["bar-pointer"] });
-    const popover = createDocumentEl("div", { classList: ["bar-popover"] });
-    line.append(wrap, pointer, popover);
+    line.append(wrap, pointer);
     this.wrap = wrap;
     this.pointer = pointer;
     const lineMoveEvent = (e: MouseEvent) => {
       if (e.offsetX !== undefined && e.target === wrap) {
         fullLine.setAttribute("style", `transform:translateX(${e.offsetX}px);`);
-        popover.setAttribute("style", `transform:translateX(${e.offsetX}px);`);
+        this.popover.setAttribute("style", `transform:translateX(${e.offsetX}px);`);
         const rate = e.offsetX / wrap.offsetWidth;
-        popover.innerText = this.calcTimeByRate(rate);
+        this.popover.innerText = this.calcTimeByRate(rate);
       }
     };
     wrap.addEventListener("mouseenter", () => {
+      console.log('event')
       wrap.addEventListener("mousemove", lineMoveEvent);
-      popover.classList.add("popover-show");
+      this.popover.classList.add("popover-show");
     });
     wrap.addEventListener("mouseleave", () => {
       wrap.removeEventListener("mouseover", lineMoveEvent);
       fullLine.setAttribute("style", `transform:translateX(${0}px);`);
-      popover.classList.remove("popover-show");
+      this.popover.classList.remove("popover-show");
     });
     wrap.addEventListener("click", (e) => {
       const rate = e.offsetX / wrap.offsetWidth;
